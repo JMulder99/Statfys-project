@@ -14,7 +14,7 @@ def particle_in_box(N, steps):
         ystep = np.sin(radians)*1.8
         ystep = ystep.reshape(N, 1)
         update = np.hstack((xstep, ystep))
-        #update = np.random.randint(-1, 2,size=N*2).reshape(N, 2)
+
         outside1 = (np.all(pos_arr>10, axis=0)).sum()
         outside2 = (np.all(pos_arr<-10, axis=0)).sum()
         outside3 = (np.all(pos_arr>10, axis=1)).sum()
@@ -32,16 +32,20 @@ def stdev(list):
     # standard deviation
     sigma = (sum([((x - mean)**2) for x in list]) / len(list))**(0.5)
     return mean, sigma
-
-'''collection = []
+'''
+collection = []
 particles = []
 for steps in np.arange(100, 10000, 100):
-    particles.append(part)'''
+    particles.append(particle_in_box(100, steps))'''
     
 
 # Making of subplots 
+N = 10000
+steps = 10000
 fig, axs = plt.subplots(nrows = 1, ncols = 3, figsize = (16, 6))
-axs[0].plot(particle_in_box(100, 10000))
-axs[0].set_xlabel('Time')
+fig.suptitle('Photons inside Sun')
+axs[0].scatter(np.arange(0, steps), particle_in_box(N, steps))
+axs[0].set_xlabel('Time [distance travelled/c]')
 axs[0].set_ylabel('Particles outside box')
+axs[0].set_title('Randomwalk of {} particles with {} steps'.format(N, steps))
 plt.show()
