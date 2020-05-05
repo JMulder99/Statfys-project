@@ -9,7 +9,7 @@ import numpy as np
 begin = time.time()
 
 # returns list of number of particles outside box at each step
-def particle_in_box(N, steps):
+def particle_in_box(N, steps, sunradius):
 
     # start at centre
     pos_arr = np.zeros((N, 2), dtype=float)
@@ -32,7 +32,7 @@ def particle_in_box(N, steps):
 
         # check how many outside radius
         distance_from_0 = np.sqrt(np.square(pos_arr[:, 0]) + np.square(pos_arr[:, 1])) 
-        totalout = (distance_from_0 > 100).sum()
+        totalout = (distance_from_0 > sunradius).sum()
      
         # append and update
         count_outside.append(totalout)
@@ -54,9 +54,10 @@ def stdev(list):
 # Making of subplots 
 N = 10000
 steps = 100000
-fig, axs = plt.subplots(nrows = 1, ncols = 3, figsize = (16, 6))
+sunradius = 200
+fig, axs = plt.subplots(nrows = 1, ncols = 3, figsize = (20, 6))
 fig.suptitle('Photons inside Sun')
-number_outside, end_pos = particle_in_box(N, steps)
+number_outside, end_pos = particle_in_box(N, steps, sunradius)
 # subplot 0 - number of particles outside box at each step
 axs[0].scatter(np.arange(0, steps), number_outside)
 axs[0].set_xlabel('Time [iteration]')
@@ -64,10 +65,12 @@ axs[0].set_ylabel('Particles outside box')
 axs[0].set_title('Randomwalk of {} particles with {} steps'.format(N, steps))
 
 # subplot 1 - end position of all particles
-axs[1].scatter(end_pos[:, 0], end_pos[:, 1])
+circle = plt.Circle((0, 0), sunradius, color='y', fill=False, alpha=1)
+axs[1].add_artist(circle)
+axs[1].scatter(end_pos[:, 0], end_pos[:, 1], s=1, alpha=0.1, edgecolor=None, c='k')
 axs[1].set_xlabel('Time horizontal displacement [m]')
 axs[1].set_ylabel('vertical displacement [m]')
-axs[1].set_title('Randomwalk of {} particles with {} steps'.format(N, steps))
+axs[1].set_title('Endposition after {} steps.'.format(steps))
 
 print(time.time() - begin)
 plt.show()
