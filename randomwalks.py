@@ -73,4 +73,5 @@ axs[1].set_ylabel('vertical displacement [m]')
 axs[1].set_title('Endposition after {} steps.'.format(steps))
 
 print(time.time() - begin)
+plt.savefig("randomwalk_out_sun")
 plt.show()
