@@ -30,18 +30,15 @@ def particle_in_box(N, steps):
         # merge vertical arrays horizontally
         update = np.hstack((xstep, ystep))
 
-        # check how many outside box
-        outside1 = (np.all(pos_arr>10, axis=0)).sum()
-        outside2 = (np.all(pos_arr<-10, axis=0)).sum()
-        outside3 = (np.all(pos_arr>10, axis=1)).sum()
-        outside4 = (np.all(pos_arr<-10, axis=1)).sum()
-        totalout = outside1+outside2+outside3+outside4
-
+        # check how many outside radius
+        distance_from_0 = np.sqrt(np.square(pos_arr[:, 0]) + np.square(pos_arr[:, 1])) 
+        totalout = (distance_from_0 > 100).sum()
+     
         # append and update
         count_outside.append(totalout)
         pos_arr += update
 
-    return count_outside
+    return count_outside, pos_arr
 
 '''
 # function to find average and standard deviation of any given list.
@@ -56,15 +53,21 @@ def stdev(list):
 
 # Making of subplots 
 N = 10000
-steps = 10000
+steps = 100000
 fig, axs = plt.subplots(nrows = 1, ncols = 3, figsize = (16, 6))
 fig.suptitle('Photons inside Sun')
-
+number_outside, end_pos = particle_in_box(N, steps)
 # subplot 0 - number of particles outside box at each step
-axs[0].scatter(np.arange(0, steps), particle_in_box(N, steps))
-axs[0].set_xlabel('Time [distance travelled/c]')
+axs[0].scatter(np.arange(0, steps), number_outside)
+axs[0].set_xlabel('Time [iteration]')
 axs[0].set_ylabel('Particles outside box')
 axs[0].set_title('Randomwalk of {} particles with {} steps'.format(N, steps))
+
+# subplot 1 - end position of all particles
+axs[1].scatter(end_pos[:, 0], end_pos[:, 1])
+axs[1].set_xlabel('Time horizontal displacement [m]')
+axs[1].set_ylabel('vertical displacement [m]')
+axs[1].set_title('Randomwalk of {} particles with {} steps'.format(N, steps))
 
 print(time.time() - begin)
 plt.show()
